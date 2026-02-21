@@ -1,7 +1,33 @@
-import { AbsoluteFill, Sequence, Video, Img, useCurrentFrame, interpolate } from 'remotion';
-import { CanvasElement } from '@/store/useEditorStore';
+import { AbsoluteFill, Sequence, Video, Img, useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
+import { CanvasElement } from '../../store/useEditorStore';
 
 export const RenderElement: React.FC<{ element: CanvasElement }> = ({ element }) => {
+    const frame = useCurrentFrame();
+    const { fps } = useVideoConfig();
+
+    // Animación de entrada "Elegante" (0 a 1.5 segundos)
+    // 1. Fade In
+    const opacityEntry = interpolate(
+        frame,
+        [0, 25], // Entrada rápida de opacidad
+        [0, 1],
+        { extrapolateRight: 'clamp' }
+    );
+
+    // 2. Scale In (0.95 a 1.0) usando spring para suavidad premium
+    const scaleEntry = spring({
+        frame,
+        fps,
+        config: {
+            damping: 12,
+            stiffness: 100,
+            mass: 0.5,
+        },
+    });
+
+    // Mapeamos el spring (0 a 1) al rango de escala deseado (0.95 a 1)
+    const finalScale = interpolate(scaleEntry, [0, 1], [0.95, 1]);
+
     return (
         <Sequence
             from={element.startFrame}
@@ -14,7 +40,8 @@ export const RenderElement: React.FC<{ element: CanvasElement }> = ({ element })
                     top: element.y,
                     width: element.width,
                     height: element.height,
-                    transform: `rotate(${element.rotation}deg)`,
+                    transform: `rotate(${element.rotation}deg) scale(${finalScale})`,
+                    opacity: opacityEntry,
                     zIndex: element.zIndex,
                     borderRadius: element.properties?.borderRadius || 0,
                     boxShadow: element.properties?.boxShadow || 'none',
@@ -62,7 +89,10 @@ export const RenderElement: React.FC<{ element: CanvasElement }> = ({ element })
                 )}
 
                 {element.type === 'slideshow' && (
-                    <Slideshow images={element.images || []} durationPerImage={element.properties?.slideshowDuration || 120} />
+                    <Slideshow
+                        images={element.images || []}
+                        durationPerImage={element.properties?.slideshowDuration || 120}
+                    />
                 )}
             </div>
         </Sequence>
@@ -80,10 +110,9 @@ const Slideshow: React.FC<{ images: string[]; durationPerImage: number }> = ({ i
     const nextIndex = (index + 1) % images.length;
 
     // Lógica de Crossfade lento (1.5s = 90 frames a 60fps)
-    const transitionFrames = 90; // 1.5 segundos
+    const transitionFrames = 90;
     const frameInImage = currentFrameInCycle % durationPerImage;
 
-    // Al final de la imagen actual, empezamos el fade out y el fade in de la siguiente
     const opacity = interpolate(
         frameInImage,
         [durationPerImage - transitionFrames, durationPerImage],

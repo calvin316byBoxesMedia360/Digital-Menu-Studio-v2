@@ -5,10 +5,18 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      props:
-        description: 'JSON de elementos para el render'
-        required: false
-        default: '{"elements": []}'
+      projectId:
+        description: 'UUID del Proyecto de Supabase'
+        required: true
+        default: ''
+      quality:
+        description: 'Calidad del vídeo (1080p o 4k)'
+        required: true
+        default: '1080p'
+        type: choice
+        options:
+          - 1080p
+          - 4k
 
 jobs:
   render:
@@ -29,12 +37,27 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Render Video
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           mkdir -p out
-          npx remotion render src/remotion/index.ts DigitalMenu out/video.mp4 --props '${{ github.event.inputs.props || "{\"elements\": [{\"id\": \"1\", \"type\": \"text\", \"srcOrText\": \"PRUEBA REMOTION CLOUD\", \"x\": 0, \"y\": 800, \"width\": 1080, \"height\": 200, \"rotation\": 0, \"zIndex\": 1, \"startFrame\": 0, \"durationFrames\": 300, \"properties\": {\"fontSize\": 80, \"fillColor\": \"#ffffff\", \"textAlign\": \"center\"}}]}" }}'
+          QUALITY="${{ github.event.inputs.quality || '1080p' }}"
+          WIDTH=1080
+          HEIGHT=1920
+          if [ "$QUALITY" = "4k" ]; then
+            WIDTH=2160
+            HEIGHT=3840
+          fi
+          
+          # Renderizar inyectando el projectId y las dimensiones vía props
+          npx remotion render src/remotion/index.ts DigitalMenu out/video.mp4 \
+            --props '{"projectId": "${{ github.event.inputs.projectId }}", "quality": "'"$QUALITY"'"}' \
+            --width $WIDTH \
+            --height $HEIGHT
 
       - name: Upload Video
         uses: actions/upload-artifact@v4
         with:
-          name: digital-menu-video
+          name: digital-menu-${{ github.event.inputs.projectId || 'latest' }}-${{ github.event.inputs.quality || '1080p' }}
           path: out/video.mp4

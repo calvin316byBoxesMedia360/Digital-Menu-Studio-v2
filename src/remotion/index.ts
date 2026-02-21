@@ -1,8 +1,11 @@
-import { registerRoot, Composition } from 'remotion';
+import { registerRoot, Composition, getInputProps } from 'remotion';
 import { MenuVideo } from './MenuVideo';
 import { CanvasElement } from '../store/useEditorStore';
 
 export const RemotionRoot: React.FC = () => {
+    // Obtener props inyectadas desde la CLI o el Workflow
+    const inputProps = getInputProps();
+
     return (
         <Composition
             id= "DigitalMenu"
@@ -12,7 +15,8 @@ export const RemotionRoot: React.FC = () => {
     width = { 1080}
     height = { 1920}
     defaultProps = {{
-        elements: [] as CanvasElement[],
+        projectId: inputProps.projectId as string || undefined,
+            elements: [] as CanvasElement[],
             }
 }
         />
