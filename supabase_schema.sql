@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS assets (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- CONFIGURACIÓN DE STORAGE (Ejecutar en la consola de Supabase)
--- 1. Crear un bucket llamado 'menu-assets'
--- 2. Establecer el bucket como público (opcional, recomendado para menús)
+-- CONFIGURACIÓN DE STORAGE
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('menu-assets', 'menu-assets', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- POLÍTICAS DE STORAGE (Permitir subidas públicas para pruebas)
+CREATE POLICY "Acceso Público" ON storage.objects FOR ALL USING (bucket_id = 'menu-assets');

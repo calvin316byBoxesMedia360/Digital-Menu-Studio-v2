@@ -53,9 +53,13 @@ Base lista para integración con Supabase.
 - [x] **Inyección Inteligente**: Los assets subidos se transforman en elementos de Vídeo PiP o Imágenes en el lienzo con un clic.
 *Estado: FASE 3 COMPLETADA AL 100%. Persistencia y gestión de medios operativa.*
 
-### 🟡 Fase 4: Motor de Video (Remotion + CI/CD)
-- Composiciones de video.
-- Configuración de GitHub Actions para renders de prueba.
+### 🟡 Fase 4: Motor de Video (Remotion + CI/CD) - EN PROGRESO
+- [x] Instalación de Remotion Core y dependencias de renderizado.
+- [x] Configuración de GitHub Actions (`render-video.yml`) con FFmpeg.
+- [x] Arquitectura de Composición Remotion (1080x1920).
+- [x] Soporte para **Slideshow con Crossfade** y **Video PiP** en el render.
+- [ ] Renderizado dinámico basado en estados de Supabase.
+*Estado: INFRAESTRUCTURA DE RENDERIZADO CLOUD OPERATIVA. Estructura de Remotion lista para escalado.*
 
 ### 🟡 Fase 5: IA Multimodal
 - Integración de asistente inteligente en el Sidebar.

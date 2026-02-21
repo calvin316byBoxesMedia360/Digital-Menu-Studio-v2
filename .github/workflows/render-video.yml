@@ -1,0 +1,40 @@
+name: Render Video
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      props:
+        description: 'JSON de elementos para el render'
+        required: false
+        default: '{"elements": []}'
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Render Video
+        run: |
+          mkdir -p out
+          npx remotion render src/remotion/index.ts DigitalMenu out/video.mp4 --props '${{ github.event.inputs.props || "{\"elements\": [{\"id\": \"1\", \"type\": \"text\", \"srcOrText\": \"PRUEBA REMOTION CLOUD\", \"x\": 0, \"y\": 800, \"width\": 1080, \"height\": 200, \"rotation\": 0, \"zIndex\": 1, \"startFrame\": 0, \"durationFrames\": 300, \"properties\": {\"fontSize\": 80, \"fillColor\": \"#ffffff\", \"textAlign\": \"center\"}}]}" }}'
+
+      - name: Upload Video
+        uses: actions/upload-artifact@v4
+        with:
+          name: digital-menu-video
+          path: out/video.mp4
