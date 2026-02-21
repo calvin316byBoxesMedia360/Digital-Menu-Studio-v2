@@ -15,7 +15,7 @@ export const RemotionRoot: React.FC = () => {
     width = { 1080}
     height = { 1920}
     defaultProps = {{
-        projectId: inputProps.projectId as string || undefined,
+        projectId: (inputProps.projectId as string) || undefined,
             elements: [] as CanvasElement[],
             }
 }

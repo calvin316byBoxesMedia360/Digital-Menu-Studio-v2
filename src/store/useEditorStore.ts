@@ -50,6 +50,7 @@ interface EditorState {
     assets: ProjectAsset[];
     selectedElementId: string | null;
     lastSavedState: string;
+    notification: { message: string, type: 'info' | 'success' | 'error' } | null;
 
     // Acciones
     setProjectId: (id: string | null) => void;
@@ -64,6 +65,7 @@ interface EditorState {
     setSelectedElementId: (id: string | null) => void;
     saveToSupabase: () => Promise<void>;
     fetchAssets: () => Promise<void>;
+    showNotification: (message: string, type?: 'info' | 'success' | 'error') => void;
 }
 
 export const useEditorStore = create<EditorState>((set, get) => ({
@@ -73,6 +75,12 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     assets: [],
     selectedElementId: null,
     lastSavedState: '[]',
+    notification: null,
+
+    showNotification: (message, type = 'info') => {
+        set({ notification: { message, type } });
+        setTimeout(() => set({ notification: null }), 3000);
+    },
 
     setProjectId: (id) => set({ projectId: id }),
     setProjectName: (name) => set({ projectName: name }),

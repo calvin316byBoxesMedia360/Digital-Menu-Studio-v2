@@ -42,7 +42,8 @@ export const Sidebar = () => {
         fetchAssets,
         selectedElementId,
         updateElementProperties,
-        elements
+        elements,
+        showNotification
     } = useEditorStore();
 
     useEffect(() => {
@@ -198,8 +199,8 @@ export const Sidebar = () => {
                         key={tab.id}
                         onClick={() => setActiveTab(activeTab === tab.id ? null : tab.id)}
                         className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors ${activeTab === tab.id
-                                ? "text-purple-400 bg-purple-500/10"
-                                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+                            ? "text-purple-400 bg-purple-500/10"
+                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
                             }`}
                     >
                         {tab.icon}
@@ -314,7 +315,11 @@ export const Sidebar = () => {
                                 {activeTab === "templates" && (
                                     <div className="grid grid-cols-2 gap-2">
                                         {[1, 2, 3, 4].map((i) => (
-                                            <div key={i} className="aspect-[9/16] bg-zinc-800 rounded-md border border-zinc-700 hover:border-purple-500 cursor-pointer transition-colors" />
+                                            <div
+                                                key={i}
+                                                onClick={() => showNotification("Plantilla en desarrollo", "info")}
+                                                className="aspect-[9/16] bg-zinc-800 rounded-md border border-zinc-700 hover:border-purple-500 cursor-pointer transition-colors"
+                                            />
                                         ))}
                                     </div>
                                 )}
@@ -323,7 +328,10 @@ export const Sidebar = () => {
                                     <div className="p-3 bg-purple-500/5 border border-purple-500/20 rounded-lg">
                                         <p className="text-xs text-purple-200/60 mb-2">Pregúntale a CuatesMenuGPT</p>
                                         <div className="h-24 bg-zinc-800 rounded border border-zinc-700 mb-2" />
-                                        <button className="w-full py-2 bg-purple-600 text-xs font-bold rounded hover:bg-purple-500 transition-colors">GENERAR CON IA</button>
+                                        <button
+                                            onClick={() => showNotification("IA Assistant en desarrollo", "info")}
+                                            className="w-full py-2 bg-purple-600 text-xs font-bold rounded hover:bg-purple-500 transition-colors"
+                                        >GENERAR CON IA</button>
                                     </div>
                                 )}
                             </div>

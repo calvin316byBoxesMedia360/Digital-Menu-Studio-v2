@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useEditorStore } from "@/store/useEditorStore";
 import {
     Type,
@@ -15,7 +15,8 @@ import {
     Image as ImageIcon,
     Plus,
     X,
-    Layout
+    Layout,
+    Loader2
 } from "lucide-react";
 
 const FONTS = [
@@ -34,6 +35,10 @@ const SHADOWS = [
 
 export const PropertiesPanel = () => {
     const { elements, selectedElementId, updateElementProperties, removeElement } = useEditorStore();
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploading, setIsUploading] = React.useState(false);
+    const projectId = useEditorStore((state) => state.projectId);
 
     const selectedElement = elements.find((el) => el.id === selectedElementId);
 
@@ -62,11 +67,42 @@ export const PropertiesPanel = () => {
         }
     };
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !projectId) return;
+
+        setIsUploading(true);
+        try {
+            const { supabase } = await import('@/lib/supabase');
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+            const filePath = `${projectId}/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('menu-assets')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('menu-assets')
+                .getPublicUrl(filePath);
+
+            const currentImages = selectedElement.images || [];
+            handleChange('images', [...currentImages, publicUrl]);
+        } catch (error) {
+            console.error("❌ Error en la subida:", error);
+            alert("Error al subir la imagen.");
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    };
+
     const addSlideImage = () => {
         const currentImages = selectedElement.images || [];
         if (currentImages.length < 5) {
-            const newUrl = prompt("Introduce la URL de la imagen:");
-            if (newUrl) handleChange('images', [...currentImages, newUrl]);
+            fileInputRef.current?.click();
         }
     };
 
@@ -147,6 +183,13 @@ export const PropertiesPanel = () => {
                     <div className="space-y-4">
                         <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Imágenes del Carrusel ({selectedElement.images?.length || 0}/5)</label>
                         <div className="space-y-2">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileUpload}
+                            />
                             {selectedElement.images?.map((img, idx) => (
                                 <div key={idx} className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 p-1.5 rounded group">
                                     <div className="w-8 h-8 rounded bg-zinc-800 overflow-hidden shrink-0">
@@ -164,9 +207,11 @@ export const PropertiesPanel = () => {
                             {(selectedElement.images?.length || 0) < 5 && (
                                 <button
                                     onClick={addSlideImage}
-                                    className="w-full py-2 border border-zinc-800 border-dashed rounded text-zinc-500 hover:text-white hover:border-zinc-600 transition-all text-[10px] flex items-center justify-center gap-2"
+                                    disabled={isUploading}
+                                    className="w-full py-2 border border-zinc-800 border-dashed rounded text-zinc-500 hover:text-white hover:border-zinc-600 transition-all text-[10px] flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
-                                    <Plus size={12} /> Añadir Imagen
+                                    {isUploading ? <Loader2 className="animate-spin" size={12} /> : <Plus size={12} />}
+                                    {isUploading ? "Subiendo..." : "Añadir Imagen"}
                                 </button>
                             )}
                         </div>
@@ -199,8 +244,8 @@ export const PropertiesPanel = () => {
                                         key={shadow.name}
                                         onClick={() => handleChange('boxShadow', shadow.value)}
                                         className={`py-2 px-1 rounded text-[10px] border transition-all ${selectedElement.properties?.boxShadow === shadow.value
-                                                ? "border-purple-600 bg-purple-600/10 text-white"
-                                                : "border-zinc-800 bg-zinc-900 text-zinc-500 hover:border-zinc-700"
+                                            ? "border-purple-600 bg-purple-600/10 text-white"
+                                            : "border-zinc-800 bg-zinc-900 text-zinc-500 hover:border-zinc-700"
                                             }`}
                                     >
                                         {shadow.name}

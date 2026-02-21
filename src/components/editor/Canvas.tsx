@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { Monitor, ZoomIn, ZoomOut, Maximize, Play, Image as ImageIcon } from "lucide-react";
+import { Monitor, ZoomIn, ZoomOut, Maximize, Play, Image as ImageIcon, Send } from "lucide-react";
 import { useEditorStore, CanvasElement } from "@/store/useEditorStore";
 import { motion, AnimatePresence } from "framer-motion";
+import { ExportModal } from "./ExportModal";
 
 export const Canvas = () => {
-    const { elements, selectedElementId, setSelectedElementId, updateElementPosition } = useEditorStore();
+    const { elements, selectedElementId, setSelectedElementId, updateElementPosition, projectId, showNotification } = useEditorStore();
     const containerRef = useRef<HTMLDivElement>(null);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     return (
         <div className="flex-1 bg-zinc-950 relative overflow-hidden flex flex-col">
@@ -20,16 +22,39 @@ export const Canvas = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setIsExportModalOpen(true)}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded text-[10px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-purple-900/40 mr-4"
+                    >
+                        <Send size={12} />
+                        Exportar MP4
+                    </button>
+
                     <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded px-2 text-zinc-400">
-                        <button className="p-1 hover:text-white transition-colors"><ZoomOut size={14} /></button>
+                        <button
+                            onClick={() => showNotification("Zoom Out en desarrollo", "info")}
+                            className="p-1 hover:text-white transition-colors"
+                        ><ZoomOut size={14} /></button>
                         <span className="text-[10px] px-2 font-mono">45%</span>
-                        <button className="p-1 hover:text-white transition-colors"><ZoomIn size={14} /></button>
+                        <button
+                            onClick={() => showNotification("Zoom In en desarrollo", "info")}
+                            className="p-1 hover:text-white transition-colors"
+                        ><ZoomIn size={14} /></button>
                     </div>
-                    <button className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-800 rounded">
+                    <button
+                        onClick={() => showNotification("Pantalla completa en desarrollo", "info")}
+                        className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-800 rounded"
+                    >
                         <Maximize size={14} />
                     </button>
                 </div>
             </div>
+
+            <ExportModal
+                isOpen={isExportModalOpen}
+                onClose={() => setIsExportModalOpen(false)}
+                projectId={projectId}
+            />
 
             {/* Workspace Area */}
             <div

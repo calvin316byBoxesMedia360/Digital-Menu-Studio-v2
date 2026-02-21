@@ -6,13 +6,14 @@ import { Canvas } from "@/components/editor/Canvas";
 import { Timeline } from "@/components/editor/Timeline";
 import { PropertiesPanel } from "@/components/editor/PropertiesPanel";
 import { Save, Share2, Download, Settings, Menu, Loader2 } from "lucide-react";
+import { Toast } from "@/components/editor/Toast";
 
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useEditorStore } from "@/store/useEditorStore";
 import { supabase } from "@/lib/supabase";
 
 export default function EditorPage() {
-    const { projectId, setProjectId, setElements, setProjectName } = useEditorStore();
+    const { projectId, setProjectId, setElements, setProjectName, showNotification } = useEditorStore();
 
     // Activar el autoguardado
     useAutoSave();
@@ -63,27 +64,42 @@ export default function EditorPage() {
                             D
                         </div>
                         <div className="h-4 w-px bg-zinc-800" />
-                        <h1 className="text-xs font-semibold text-zinc-300 tracking-wide uppercase group flex items-center gap-2 cursor-pointer">
+                        <h1
+                            className="text-xs font-semibold text-zinc-300 tracking-wide uppercase group flex items-center gap-2 cursor-pointer"
+                            onClick={() => showNotification("Edición de nombre en desarrollo", "info")}
+                        >
                             {useEditorStore((state) => state.projectName)}
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-zinc-500">Edit</span>
                         </h1>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-3 py-1.5 rounded bg-zinc-800 text-zinc-300 text-[11px] font-medium hover:bg-zinc-700 transition-colors">
+                        <button
+                            onClick={() => showNotification("Autoguardado activo", "success")}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded bg-zinc-800 text-zinc-300 text-[11px] font-medium hover:bg-zinc-700 transition-colors"
+                        >
                             <Save size={14} />
                             Guardar
                         </button>
-                        <button className="flex items-center gap-2 px-3 py-1.5 rounded bg-zinc-800 text-zinc-300 text-[11px] font-medium hover:bg-zinc-700 transition-colors">
+                        <button
+                            onClick={() => showNotification("Función de compartir en desarrollo", "info")}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded bg-zinc-800 text-zinc-300 text-[11px] font-medium hover:bg-zinc-700 transition-colors"
+                        >
                             <Share2 size={14} />
                             Compartir
                         </button>
-                        <button className="flex items-center gap-2 px-4 py-1.5 rounded bg-purple-600 text-white text-[11px] font-bold hover:bg-purple-500 transition-all shadow-lg shadow-purple-900/20 active:scale-95">
+                        <button
+                            onClick={() => showNotification("Usa el botón púrpura en el área de Canvas", "info")}
+                            className="flex items-center gap-2 px-4 py-1.5 rounded bg-purple-600 text-white text-[11px] font-bold hover:bg-purple-500 transition-all shadow-lg shadow-purple-900/20 active:scale-95"
+                        >
                             <Download size={14} />
                             EXPORTAR MP4
                         </button>
                         <div className="h-4 w-px bg-zinc-800 ml-2" />
-                        <button className="p-2 text-zinc-400 hover:text-white transition-colors">
+                        <button
+                            onClick={() => showNotification("Configuración en desarrollo", "info")}
+                            className="p-2 text-zinc-400 hover:text-white transition-colors"
+                        >
                             <Settings size={16} />
                         </button>
                     </div>
@@ -106,6 +122,8 @@ export default function EditorPage() {
                     <PropertiesPanel />
                 </div>
             </div>
+
+            <Toast />
         </div>
     );
 }

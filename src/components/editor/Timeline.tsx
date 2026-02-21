@@ -1,18 +1,29 @@
 "use client";
 
-import React from "react";
 import { Play, SkipBack, SkipForward, Clock } from "lucide-react";
+import { useEditorStore } from "@/store/useEditorStore";
 
 export const Timeline = () => {
+    const showNotification = useEditorStore((state) => state.showNotification);
+
     return (
         <div className="h-48 bg-zinc-900 border-t border-zinc-800 flex flex-col">
             {/* Timeline Header */}
             <div className="h-8 border-b border-zinc-800 flex items-center px-4 justify-between">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 text-zinc-400">
-                        <button className="hover:text-white transition-colors"><SkipBack size={14} /></button>
-                        <button className="hover:text-white transition-colors"><Play size={14} fill="currentColor" /></button>
-                        <button className="hover:text-white transition-colors"><SkipForward size={14} /></button>
+                        <button
+                            onClick={() => showNotification("Retroceder en desarrollo", "info")}
+                            className="hover:text-white transition-colors"
+                        ><SkipBack size={14} /></button>
+                        <button
+                            onClick={() => showNotification("Reproducción en vivo en desarrollo", "info")}
+                            className="hover:text-white transition-colors"
+                        ><Play size={14} fill="currentColor" /></button>
+                        <button
+                            onClick={() => showNotification("Avanzar en desarrollo", "info")}
+                            className="hover:text-white transition-colors"
+                        ><SkipForward size={14} /></button>
                     </div>
                     <span className="text-[10px] font-mono text-zinc-500">00:00:00 / 00:00:10</span>
                 </div>
