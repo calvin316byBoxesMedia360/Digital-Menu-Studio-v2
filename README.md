@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digital Menu Studio v2.0 - Documento Maestro
 
-## Getting Started
+## 🏗️ Arquitectura y Reglas del Proyecto
 
-First, run the development server:
+### 1. Stack Tecnológico Estricto
+- **Frontend:** Next.js 15 (Estable), Tailwind CSS v4, Zustand, Framer Motion, Lucide React.
+- **Backend (Producción):** Supabase (PostgreSQL, Storage, Auth).
+- **Video:** Remotion + FFmpeg.
+- **Infraestructura:** GCP Cloud Run para renderizado escalable.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 2. Directriz de Infraestructura (Desarrollo)
+⚠️ **Prohibido ejecutar renders pesados de Remotion en local.**
+- El entorno local se utiliza únicamente para maquetación y previsualización ligera.
+- **Flujo de Trabajo:** Las pruebas de renderizado se realizarán mediante **GitHub Actions**.
+- Al hacer push a ramas específicas, GitHub Actions renderizará el .mp4 y lo adjuntará como un artefacto descargable para validación.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Filosofía de Diseño (Ingeniería de Diseño)
+- **Rendimiento sobre Estética:** Prohibido el uso de `backdrop-filter` (Glassmorphism) en el editor para mantener 60fps constantes.
+- **Estética:** Colores sólidos, bordes limpios, estilo herramientas profesionales (Figma/Adobe).
+- **Interactividad:** Edición in-place, snapping magnético, fluidez máxima.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 💎 Capacidades Premium Operativas
+- [x] **Carrusel de Imágenes**: Soporte para múltiples assets con transición Crossfade lenta (vía Framer Motion).
+- [x] **Vídeo Picture-in-Picture**: MP4s con esquinas redondeadas (`borderRadius`) y sombras profundas (`boxShadow`).
+- [x] **Tipografía Dinámica**: Fuentes Google (Bebas Neue, Playfair) integradas.
+- [x] **Drag & Drop a 60FPS**: Posicionamiento absoluto y escalado fluido.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## � Hoja de Ruta (Sprints)
 
-## Learn More
+### 🔴 Fase 1: Layout Base del Editor (SPRINT ACTUAL)
+- [x] Downgrade a Next.js 15 Estable.
+- [x] Estructura Grid/Flex: Sidebar, Canvas, Timeline.
+- [x] Sidebar interactivo con pestañas y drawer (Framer Motion).
+- [x] Fondos y patrones sutiles para áreas de trabajo.
+*Estado: COMPLETADO. Listo para revisión.*
 
-To learn more about Next.js, take a look at the following resources:
+### 🟡 Fase 2: Motor de Lienzo y Manipulación (COMPLETADO)
+- [x] Configuración del store global (CanvasElement Schema).
+- [x] Implementación de posicionamiento absoluto (X, Y).
+- [x] Sistema de Drag & Drop fluido con Framer Motion.
+- [x] Selección activa de elementos.
+- [x] **Panel de Propiedades Contextuales**: Edición de texto, color, fuentes premium y tamaño en tiempo real.
+*Estado: COMPLETADO al 100%. El editor visual es plenamente funcional para diseño.*
+Base lista para integración con Supabase.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🟡 Fase 3: Persistencia y Backend (Supabase) - EN PROGRESO
+- [x] Instalación de `@supabase/supabase-js`.
+- [x] Configuración del cliente y variables de entorno.
+- [x] Esquema de base de datos SQL (Tabla `projects` y `assets`).
+- [x] **Lógica de Autoguardado (Debounce 1.5s)**: Persistencia automática del estado del lienzo.
+- [x] **Integración de Supabase Storage**: Subida de PNG/JPG/MP4 al bucket `menu-assets`.
+- [x] **Galería de Medios**: Registro en la tabla `assets` y visualización dinámica en el Sidebar.
+- [x] **Inyección Inteligente**: Los assets subidos se transforman en elementos de Vídeo PiP o Imágenes en el lienzo con un clic.
+*Estado: FASE 3 COMPLETADA AL 100%. Persistencia y gestión de medios operativa.*
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🟡 Fase 4: Motor de Video (Remotion + CI/CD)
+- Composiciones de video.
+- Configuración de GitHub Actions para renders de prueba.
 
-## Deploy on Vercel
+### 🟡 Fase 5: IA Multimodal
+- Integración de asistente inteligente en el Sidebar.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+**Ubicación:** `c:\Users\boxes\.gemini\antigravity\playground\quantum-newton\digital-menu-studio-v2`
