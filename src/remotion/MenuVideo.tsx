@@ -1,5 +1,5 @@
 import { AbsoluteFill, delayRender, continueRender } from 'remotion';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { CanvasElement } from '../store/useEditorStore';
 import { RenderElement } from './components/RenderElement';
 import { supabase } from '../lib/supabase';

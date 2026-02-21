@@ -1,4 +1,5 @@
 import { AbsoluteFill, Sequence, Video, Img, useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
+import React from 'react';
 import { CanvasElement } from '../../store/useEditorStore';
 
 export const RenderElement: React.FC<{ element: CanvasElement }> = ({ element }) => {

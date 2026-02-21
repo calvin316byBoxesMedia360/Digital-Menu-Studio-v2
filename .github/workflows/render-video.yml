@@ -51,7 +51,7 @@ jobs:
           fi
           
           # Renderizar inyectando el projectId y las dimensiones vía props
-          npx remotion render src/remotion/index.ts DigitalMenu out/video.mp4 \
+          npx remotion render src/remotion/index.tsx DigitalMenu out/video.mp4 \
             --props '{"projectId": "${{ github.event.inputs.projectId }}", "quality": "'"$QUALITY"'"}' \
             --width $WIDTH \
             --height $HEIGHT
