@@ -18,6 +18,15 @@ export const MenuVideo: React.FC<{ projectId?: string; elements?: CanvasElement[
             return;
         }
 
+        // Guardián: si Supabase no tiene credenciales, no crashear el render
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        if (!supabaseUrl) {
+            console.warn('⚠️ No hay credenciales de Supabase. Renderizando con elementos vacíos.');
+            setFetchedElements(initialElements || []);
+            continueRender(handle);
+            return;
+        }
+
         try {
             const { data, error } = await supabase
                 .from('projects')
@@ -31,7 +40,7 @@ export const MenuVideo: React.FC<{ projectId?: string; elements?: CanvasElement[
             setFetchedElements((data.canvas_state as unknown as CanvasElement[]) || []);
         } catch (err) {
             console.error('❌ Error rendering project:', err);
-            setFetchedElements([]);
+            setFetchedElements(initialElements || []);
         } finally {
             continueRender(handle);
         }
